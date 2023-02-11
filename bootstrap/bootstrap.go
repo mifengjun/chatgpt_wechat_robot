@@ -2,9 +2,9 @@ package bootstrap
 
 import (
 	"fmt"
+	"github.com/eatmoreapple/openwechat"
 	"github.com/qingconglaixueit/wechatbot/handlers"
 	"github.com/qingconglaixueit/wechatbot/pkg/logger"
-	"github.com/eatmoreapple/openwechat"
 )
 
 func Run() {
@@ -14,7 +14,7 @@ func Run() {
 	// 注册消息处理函数
 	handler, err := handlers.NewHandler()
 	if err != nil {
-		logger.Danger("register error: %v", err)
+		logger.Danger(fmt.Sprintf("handlers.NewHandler error: %v", err))
 		return
 	}
 	bot.MessageHandler = handler
@@ -28,9 +28,10 @@ func Run() {
 	// 执行热登录
 	err = bot.HotLogin(reloadStorage, true)
 	if err != nil {
-		logger.Warning(fmt.Sprintf("login error: %v ", err))
+		logger.Warning(fmt.Sprintf("bot.HotLogin error: %v ", err))
 		return
 	}
+
 	// 阻塞主goroutine, 直到发生异常或者用户主动退出
-	bot.Block()
+	_ = bot.Block()
 }
