@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -70,6 +71,9 @@ func (h *UserMessageHandler) ReplyText() error {
 	if time.Now().Unix()-h.msg.CreateTime > 60 {
 		return nil
 	}
+
+	maxInt := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(5)
+	time.Sleep(time.Duration(maxInt+1) * time.Second)
 
 	log.Printf("Received User[%v], Content[%v], CreateTime[%v]", h.sender.NickName, h.msg.Content,
 		time.Unix(h.msg.CreateTime, 0).Format("2006/01/02 15:04:05"))

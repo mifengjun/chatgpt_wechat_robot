@@ -5,6 +5,7 @@ import (
 	"github.com/eatmoreapple/openwechat"
 	"github.com/qingconglaixueit/wechatbot/handlers"
 	"github.com/qingconglaixueit/wechatbot/pkg/logger"
+	"os"
 )
 
 func Run() {
@@ -20,16 +21,24 @@ func Run() {
 	bot.MessageHandler = handler
 
 	// 注册登陆二维码回调
-	bot.UUIDCallback = handlers.QrCodeCallBack
+	bot.UUIDCallback = openwechat.PrintlnQrcodeUrl
 
 	// 创建热存储容器对象
 	reloadStorage := openwechat.NewJsonFileHotReloadStorage("storage.json")
 
 	// 执行热登录
-	err = bot.HotLogin(reloadStorage, true)
+	err = bot.HotLogin(reloadStorage)
 	if err != nil {
-		logger.Warning(fmt.Sprintf("bot.HotLogin error: %v ", err))
-		return
+		if err := os.Remove("storage.json"); err != nil {
+			logger.Warning(fmt.Sprintf("os.Remove storage.json error: %v", err))
+			return
+		}
+		reloadStorage := openwechat.NewJsonFileHotReloadStorage("storage.json")
+		err = bot.HotLogin(reloadStorage)
+		if err != nil {
+			logger.Warning(fmt.Sprintf("bot.HotLogin error: %v", err))
+			return
+		}
 	}
 
 	// 阻塞主goroutine, 直到发生异常或者用户主动退出
