@@ -43,7 +43,7 @@ type ChoiceItem struct {
 // ChatGPTRequestBody 响应体
 type ChatGPTRequestBody struct {
 	Model            string  `json:"model"`
-	Messages           string  `json:"messages"`
+	Messages         map[string]interface{}  `json:"messages"`
 // 	MaxTokens        uint    `json:"max_tokens"`
 // 	Temperature      float64 `json:"temperature"`
 // 	TopP             int     `json:"top_p"`
@@ -90,7 +90,7 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 
 	requestBody := ChatGPTRequestBody{
 		Model:            cfg.Model,
-		Messages:         "[{'role': 'user', 'content': " + msg + "}]"
+		Messages:         `[{"role": "user", "content": "` + msg + `"}]`
 	}
 	requestData, err := json.Marshal(requestBody)
 	if err != nil {
