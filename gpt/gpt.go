@@ -43,7 +43,7 @@ type Message struct {
 // ChatGPTRequestBody 响应体
 type ChatGPTRequestBody struct {
 	Model            string  `json:"model"`
-	Messages         Message  `json:"messages"`
+	Messages         []Message  `json:"messages"`
 // 	MaxTokens        uint    `json:"max_tokens"`
 // 	Temperature      float64 `json:"temperature"`
 // 	TopP             int     `json:"top_p"`
@@ -88,7 +88,7 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 	if cfg.ApiKey == "" {
 		return nil, errors.New("api key required")
 	}
-	message := Message{
+	message := [1]Message{
 	Role: "user",
 	Content:msg,
 	}
