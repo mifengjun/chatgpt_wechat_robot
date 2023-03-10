@@ -89,8 +89,8 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 		return nil, errors.New("api key required")
 	}
 	message := [1]Message{
-	Role: "user",
-	Content:msg,
+	{Role: "user",
+     	Content:msg,}
 	}
 
 	requestBody := ChatGPTRequestBody{
