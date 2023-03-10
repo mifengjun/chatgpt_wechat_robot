@@ -35,7 +35,7 @@ type ChoiceItem struct {
 }
 
 
-type ChoiceItem struct {
+type Message struct {
 	Role      string `json:"role"`
 	Content        string    `json:"content"`
 }
@@ -43,13 +43,14 @@ type ChoiceItem struct {
 // ChatGPTRequestBody 响应体
 type ChatGPTRequestBody struct {
 	Model            string  `json:"model"`
-	Messages         string  `json:"messages"`
+	Messages         Message  `json:"messages"`
 // 	MaxTokens        uint    `json:"max_tokens"`
 // 	Temperature      float64 `json:"temperature"`
 // 	TopP             int     `json:"top_p"`
 // 	FrequencyPenalty int     `json:"frequency_penalty"`
 // 	PresencePenalty  int     `json:"presence_penalty"`
 }
+
 
 // Completions gtp文本模型回复
 //curl https://api.openai.com/v1/completions
@@ -87,10 +88,14 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 	if cfg.ApiKey == "" {
 		return nil, errors.New("api key required")
 	}
+	message := Messages{
+	Role: "user",
+	Content:msg
+	}
 
 	requestBody := ChatGPTRequestBody{
 		Model:            cfg.Model,
-		Messages:         "[{\"role\": \"user\", \"content\": \"" + msg + "\"}]"
+		Messages:         message
 	}
 	requestData, err := json.Marshal(requestBody)
 	if err != nil {
