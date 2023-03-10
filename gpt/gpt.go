@@ -18,7 +18,7 @@ type ChatGPTResponseBody struct {
 	ID      string                 `json:"id"`
 	Object  string                 `json:"object"`
 	Created int                    `json:"created"`
-	Model   string                 `json:"model"`
+// 	Model   string                 `json:"model"`
 	Choices []ChoiceItem           `json:"choices"`
 	Usage   map[string]interface{} `json:"usage"`
 	Error   struct {
@@ -30,21 +30,25 @@ type ChatGPTResponseBody struct {
 }
 
 type ChoiceItem struct {
-	Text         string `json:"text"`
+	Message      Message `json:"message"`
 	Index        int    `json:"index"`
-	Logprobs     int    `json:"logprobs"`
-	FinishReason string `json:"finish_reason"`
+}
+
+
+type ChoiceItem struct {
+	Role      string `json:"role"`
+	Content        string    `json:"content"`
 }
 
 // ChatGPTRequestBody 响应体
 type ChatGPTRequestBody struct {
 	Model            string  `json:"model"`
-	Prompt           string  `json:"prompt"`
-	MaxTokens        uint    `json:"max_tokens"`
-	Temperature      float64 `json:"temperature"`
-	TopP             int     `json:"top_p"`
-	FrequencyPenalty int     `json:"frequency_penalty"`
-	PresencePenalty  int     `json:"presence_penalty"`
+	Messages           string  `json:"messages"`
+// 	MaxTokens        uint    `json:"max_tokens"`
+// 	Temperature      float64 `json:"temperature"`
+// 	TopP             int     `json:"top_p"`
+// 	FrequencyPenalty int     `json:"frequency_penalty"`
+// 	PresencePenalty  int     `json:"presence_penalty"`
 }
 
 // Completions gtp文本模型回复
@@ -73,7 +77,7 @@ func Completions(msg string) (string, error) {
 	}
 	var reply string
 	if gptResponseBody != nil && len(gptResponseBody.Choices) > 0 {
-		reply = gptResponseBody.Choices[0].Text
+		reply = gptResponseBody.Choices[0].Message.Content
 	}
 	return reply, nil
 }
@@ -86,12 +90,7 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 
 	requestBody := ChatGPTRequestBody{
 		Model:            cfg.Model,
-		Prompt:           msg,
-		MaxTokens:        cfg.MaxTokens,
-		Temperature:      cfg.Temperature,
-		TopP:             1,
-		FrequencyPenalty: 0,
-		PresencePenalty:  0,
+		Messages:           msg
 	}
 	requestData, err := json.Marshal(requestBody)
 	if err != nil {
@@ -100,7 +99,7 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 
 	log.Printf("gpt request(%d) json: %s\n", runtimes, string(requestData))
 
-	req, err := http.NewRequest(http.MethodPost, "https://api.openai.com/v1/completions", bytes.NewBuffer(requestData))
+	req, err := http.NewRequest(http.MethodPost, "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(requestData))
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequest error: %v", err)
 	}
