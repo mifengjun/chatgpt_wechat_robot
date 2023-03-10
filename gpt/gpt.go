@@ -90,7 +90,7 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 
 	requestBody := ChatGPTRequestBody{
 		Model:            cfg.Model,
-		Messages:           "[{'role': 'user', 'content': " + msg + "}]"
+		Messages:         "[{'role': 'user', 'content': " + msg + "}]"
 	}
 	requestData, err := json.Marshal(requestBody)
 	if err != nil {
