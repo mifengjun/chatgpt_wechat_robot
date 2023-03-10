@@ -90,7 +90,7 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 	}
 	message := [1]Message{{Role: "user",
      	Content:msg,
-     	}
+     	},
 	}
 
 	requestBody := ChatGPTRequestBody{
