@@ -93,7 +93,7 @@ func (g *GroupMessageHandler) ReplyText() error {
 
 	var (
 		err   error
-		reply string
+		//reply string
 	)
 
 	// 1.不是@的不处理
@@ -109,7 +109,8 @@ func (g *GroupMessageHandler) ReplyText() error {
 	}
 
 	// 3.请求GPT获取回复
-	reply, err = gpt.Completions(requestText)
+	//reply, err = gpt.Completions(requestText)
+	err = gpt.Completions(requestText)
 	if err != nil {
 		text := err.Error()
 		if strings.Contains(err.Error(), "context deadline exceeded") {
