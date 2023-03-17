@@ -123,8 +123,8 @@ func (g *GroupMessageHandler) ReplyText() error {
 	}
 
 	// 4.设置上下文，并响应信息给用户
-	g.service.SetUserSessionContext(requestText, reply)
-	_, err = g.msg.ReplyText(g.buildReplyText(reply))
+	// g.service.SetUserSessionContext(requestText, reply)
+	// _, err = g.msg.ReplyText(g.buildReplyText(reply))
 	if err != nil {
 		return fmt.Errorf("reply group error: %v ", err)
 	}
