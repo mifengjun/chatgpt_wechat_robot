@@ -109,7 +109,7 @@ func (g *GroupMessageHandler) ReplyText() error {
 	}
 
 	// 3.请求GPT获取回复
-	//reply, err = gpt.Completions(requestText)
+	reply, err = gpt.Completions(requestText)
 	err = gpt.Completions(requestText)
 	if err != nil {
 		text := err.Error()
