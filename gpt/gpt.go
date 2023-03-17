@@ -110,7 +110,7 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+cfg.ApiKey)
-	client := &http.Client{Timeout: 15 * time.Second}
+	client := &http.Client{Timeout: 180 * time.Second}
 	response, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("client.Do error: %v", err)
