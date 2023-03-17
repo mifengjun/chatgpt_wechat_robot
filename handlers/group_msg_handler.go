@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
-	"math/rand"
+	//"math/rand"
 	"strings"
 	"time"
 
