@@ -93,7 +93,7 @@ func (g *GroupMessageHandler) ReplyText() error {
 
 	var (
 		err   error
-		//reply string
+		reply string
 	)
 
 	// 1.不是@的不处理
@@ -121,7 +121,7 @@ func (g *GroupMessageHandler) ReplyText() error {
 		}
 		return err
 	}
-
+	log.Println("reply: %v", reply)
 	// 4.设置上下文，并响应信息给用户
 	// g.service.SetUserSessionContext(requestText, reply)
 	// _, err = g.msg.ReplyText(g.buildReplyText(reply))
