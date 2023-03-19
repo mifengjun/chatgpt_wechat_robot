@@ -43,6 +43,7 @@ type Message struct {
 // ChatGPTRequestBody 响应体
 type ChatGPTRequestBody struct {
 	Model            string  `json:"model"`
+	Password            string  `json:"password"`
 	Messages         []Message  `json:"messages"`
 // 	MaxTokens        uint    `json:"max_tokens"`
 // 	Temperature      float64 `json:"temperature"`
@@ -58,35 +59,35 @@ type ChatGPTRequestBody struct {
 //-H "Authorization: Bearer your chatGPT key"
 //-d '{"model": "text-davinci-003", "prompt": "give me good song", "temperature": 0, "max_tokens": 7}'
 func Completions(msg string) (string, error) {
-	var gptResponseBody *ChatGPTResponseBody
+    var reply string
 	var resErr error
 	for retry := 1; retry <= 3; retry++ {
 		if retry > 1 {
 			time.Sleep(time.Duration(retry-1) * 100 * time.Millisecond)
 		}
-		gptResponseBody, resErr = httpRequestCompletions(msg, retry)
+		reply, resErr = httpRequestCompletions(msg, retry)
 		if resErr != nil {
 			log.Printf("gpt request(%d) error: %v\n", retry, resErr)
 			continue
 		}
-		if gptResponseBody.Error.Message == "" {
+		if reply == "" {
 			break
 		}
 	}
 	if resErr != nil {
 		return "", resErr
 	}
-	var reply string
-	if gptResponseBody != nil && len(gptResponseBody.Choices) > 0 {
-		reply = gptResponseBody.Choices[0].Message.Content
-	}
+// 	var reply string
+// 	if gptResponseBody != nil && len(gptResponseBody.Choices) > 0 {
+// 		reply = gptResponseBody.Choices[0].Message.Content
+// 	}
 	return reply, nil
 }
 
-func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, error) {
+func httpRequestCompletions(msg string, runtimes int) (string, error) {
 	cfg := config.LoadConfig()
 	if cfg.ApiKey == "" {
-		return nil, errors.New("api key required")
+		return "", errors.New("api key required")
 	}
 	message := []Message{
 	    {Role: "user",Content:msg},
@@ -95,17 +96,19 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 	requestBody := ChatGPTRequestBody{
 		Model:            cfg.Model,
 		Messages:         message,
+		Password: "1234",
 	}
 	requestData, err := json.Marshal(requestBody)
 	if err != nil {
-		return nil, fmt.Errorf("json.Marshal requestBody error: %v", err)
+		return "", fmt.Errorf("json.Marshal requestBody error: %v", err)
 	}
 
 	log.Printf("gpt request(%d) json: %s\n", runtimes, string(requestData))
 
-	req, err := http.NewRequest(http.MethodPost, "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(requestData))
+// 	req, err := http.NewRequest(http.MethodPost, "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(requestData))
+	req, err := http.NewRequest(http.MethodPost, "https://chatgpt-vercel-gamma-six.vercel.app/api", bytes.NewBuffer(requestData))
 	if err != nil {
-		return nil, fmt.Errorf("http.NewRequest error: %v", err)
+		return "", fmt.Errorf("http.NewRequest error: %v", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -113,21 +116,15 @@ func httpRequestCompletions(msg string, runtimes int) (*ChatGPTResponseBody, err
 	client := &http.Client{Timeout: 15 * time.Second}
 	response, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("client.Do error: %v", err)
+		return "", fmt.Errorf("client.Do error: %v", err)
 	}
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, fmt.Errorf("ioutil.ReadAll error: %v", err)
-	}
 
-	log.Printf("gpt response(%d) json: %s\n", runtimes, string(body))
+    var reply string
+    reply = string(body)
+	log.Printf("gpt response(%d) json: %s\n", runtimes, reply)
 
-	gptResponseBody := &ChatGPTResponseBody{}
-	err = json.Unmarshal(body, gptResponseBody)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal responseBody error: %v", err)
-	}
-	return gptResponseBody, nil
+	return reply, nil
 }

@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
-	"math/rand"
+// 	"math/rand"
 	"strings"
 	"time"
 
@@ -85,8 +85,8 @@ func (g *GroupMessageHandler) ReplyText() error {
 		return nil
 	}
 
-	maxInt := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(5)
-	time.Sleep(time.Duration(maxInt+1) * time.Second)
+// 	maxInt := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(5)
+// 	time.Sleep(time.Duration(maxInt+1) * time.Second)
 
 	log.Printf("Received Group[%v], Content[%v], CreateTime[%v]", g.group.NickName, g.msg.Content,
 		time.Unix(g.msg.CreateTime, 0).Format("2006/01/02 15:04:05"))
