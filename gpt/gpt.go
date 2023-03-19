@@ -70,7 +70,7 @@ func Completions(msg string) (string, error) {
 			log.Printf("gpt request(%d) error: %v\n", retry, resErr)
 			continue
 		}
-		if reply == "" {
+		if reply != "" {
 			break
 		}
 	}
